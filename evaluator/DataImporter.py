@@ -1,8 +1,10 @@
+import csv
 import json
 import os
 from json.decoder import JSONDecodeError
 
-DATA_DIRECTORY = os.path.join("..", "data", "results")
+DATA_RESULTS_DIRECTORY = os.path.join("..", "data", "results")
+DATA__DIRECTORY = os.path.join("..", "data")
 LANGUAGES = ['Cpp', 'Go', 'Java', 'JavaScript', 'Objective-C', 'Perl', 'PHP', 'Python', ]
 
 
@@ -41,6 +43,18 @@ def import_files(dir_path):
     return output
 
 
+def export_csv(data, output_file):
+    column_names = data[0].keys()
+    try:
+        with open(output_file, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=column_names)
+            writer.writeheader()
+            for row in data:
+                writer.writerow(row)
+    except IOError:
+        raise IOError("Something went wrong")
+
+
 if __name__ == '__main__':
-    data = import_files(os.path.abspath(DATA_DIRECTORY))
-    pass
+    data = import_files(os.path.abspath(DATA_RESULTS_DIRECTORY))
+    export_csv(data, os.path.join(DATA__DIRECTORY, "data.csv"))
