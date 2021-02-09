@@ -8,8 +8,7 @@ LANGUAGES = ['Cpp', 'Go', 'Java', 'JavaScript', 'Objective-C', 'Perl', 'PHP', 'P
 
 def import_files(dir_path):
     # Create a dict with an empty list for each language
-    output_old = {lang: [] for lang in LANGUAGES}  # output for old repos
-    output_new = {lang: [] for lang in LANGUAGES}  # output for new repos
+    output = []  # output for old repos
 
     for file in os.scandir(dir_path):
         try:
@@ -31,17 +30,17 @@ def import_files(dir_path):
                              + "\" of Result of \"" + file.name + "\" is not a valid language.")
 
         repo_result = {'language': data['repo']['language'],
-                       'analysis': ['analysis']}
+                       "old_repo": data['repo']['old_repo'],
+                       "name": data['repo']['name'],
+                       'n_code': data['analysis']['code'],
+                       'n_comment': data['analysis']['comment'],
+                       'n_blank': data['analysis']['blank'],
+                       'n_files': data['analysis']['nFiles']}
 
-        old_repo: bool = data['repo']['old_repo']
-        language: str = data['repo']['language']
-        if old_repo:
-            output_old[language].append(repo_result)
-        else:
-            output_new[language].append(repo_result)
-
-    return output_old, output_new
+        output.append(repo_result)
+    return output
 
 
 if __name__ == '__main__':
-    import_files(os.path.abspath(DATA_DIRECTORY))
+    data = import_files(os.path.abspath(DATA_DIRECTORY))
+    pass
