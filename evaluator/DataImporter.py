@@ -5,7 +5,9 @@ from json.decoder import JSONDecodeError
 
 DATA_RESULTS_DIRECTORY = os.path.join("..", "data", "results")
 DATA__DIRECTORY = os.path.join("..", "data")
-LANGUAGES = ['Cpp', 'Go', 'Java', 'JavaScript', 'Objective-C', 'Perl', 'PHP', 'Python', ]
+LANGUAGES = ['Cpp', 'Go', 'Java', 'JavaScript', 'Objective-C', 'Perl', 'PHP', 'Python']
+SCRIPT_LANGUAGES = ['JavaScript', 'PHP', 'Python', 'Perl']
+COMPILED_LANGUAGES = ['Cpp', 'Java', 'Go', 'Objective-C']
 
 
 def import_files(dir_path):
@@ -31,9 +33,18 @@ def import_files(dir_path):
             raise ValueError("The language \"" + data['repo']['language']
                              + "\" of Result of \"" + file.name + "\" is not a valid language.")
 
+        if data['repo']['language'] in COMPILED_LANGUAGES:
+            is_compiled = True
+        elif data['repo']['language'] in SCRIPT_LANGUAGES:
+            is_compiled = False
+        else:
+            raise ValueError("The language \"" + data['repo']['language']
+                             + "\" of Result of \"" + file.name + "\" is not a compiled nor a interpreted language.")
+
         repo_result = {'language': data['repo']['language'],
-                       "old_repo": data['repo']['old_repo'],
-                       "name": data['repo']['name'],
+                       'compiled_language': is_compiled,
+                       'old_repo': data['repo']['old_repo'],
+                       'name': data['repo']['name'],
                        'n_code': data['analysis']['code'],
                        'n_comment': data['analysis']['comment'],
                        'n_blank': data['analysis']['blank'],
@@ -57,4 +68,4 @@ def export_csv(data, output_file):
 
 if __name__ == '__main__':
     data = import_files(os.path.abspath(DATA_RESULTS_DIRECTORY))
-    export_csv(data, os.path.join(DATA__DIRECTORY, "data.csv"))
+    export_csv(data, os.path.join(DATA__DIRECTORY, "results.csv"))
